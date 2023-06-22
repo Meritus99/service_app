@@ -9,7 +9,7 @@ class Service(models.Model):
     full_price = models.PositiveIntegerField()
 
     def __str__(self):
-        return f"Service: {self.name}, Price: {self.full_price}"
+        return f"Service: {self.name}, Price: {self.full_price}$"
 
 
 class Plan(models.Model):
@@ -26,7 +26,7 @@ class Plan(models.Model):
                                                    ])
 
     def __str__(self):
-        return f"Plan type: {self.plan_type}, Discount percent: {self.discount_percent}"
+        return f"Plan type: {self.plan_type}, Discount: {self.discount_percent}%"
 
 
 class Subscription(models.Model):
