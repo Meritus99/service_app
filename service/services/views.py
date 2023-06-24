@@ -11,9 +11,9 @@ class SubscriptionView(ReadOnlyModelViewSet):
     queryset = Subscription.objects.all().prefetch_related(
         'plan',
         Prefetch('client',
-        queryset=Client.objects.all().select_related('user').only('company_name', 'user__email'))
-    ).annotate(price=F('service__full_price') -
-                     F('service__full_price') * F('plan__discount_percent') / 100)
+                 queryset=Client.objects.all().select_related('user').only('company_name', 'user__email'))
+    )#.annotate(price=F('service__full_price') -
+     #                F('service__full_price') * F('plan__discount_percent') / 100)
 
     """ F - функция из db.models при помощи которой можно обращаться к какому-то полю.
     annotate - функция ORM (относится к каждому из Subscription) которая позволяет вычислить наше число на уровне базы,
@@ -21,12 +21,12 @@ class SubscriptionView(ReadOnlyModelViewSet):
     Однако способ с дополнением сериализатора через SerializerMethodField так же довольно удобный, не стоит об этом забывать! """
     serializer_class = SubscriptionSerializer
 
+    # Изменение логики работы внутренних методов очень нежелательное действие!
     def list(self, request, *args, **kwargs):
         # в методе list обрабатывается запрос и формируется ответ
         queryset = self.filter_queryset(self.get_queryset())
         response = super().list(request, *args, **kwargs)
         # через super мы обратились к месту откуда переопределили метод, т.е к базовому классу
-
 
         """ Агрегационные функции в SQL позволяют вывести суммарную инфу по группе записей (прямое отличие от annotate). Например 
         получая группу Subscription, можем по всей группе посчитать суммарные значения (наприм. сумму всех заказов, минимальный заказ, тд.)"""
@@ -38,4 +38,3 @@ class SubscriptionView(ReadOnlyModelViewSet):
         с аннотировать и потом с агрегировать уже с анотированные данные """
         response.data = response_data
         return response
-
